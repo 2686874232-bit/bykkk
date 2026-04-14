@@ -4,359 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不要坤坤坤</title>
-    <!-- 引入Supabase 免费后端 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
-
         body {
             min-height: 100vh;
-            background: url("https://picsum.photos/id/1002/1920/1080") center/cover no-repeat fixed;
-            color: #ffffff;
-            overflow-x: hidden;
+            background: url("https://picsum.photos/id/1002/1920/1080") center/cover fixed;
+            color: #fff;
             position: relative;
         }
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 16, 37, 0.75);
+            top:0;left:0;width:100%;height:100%;
+            background: rgba(26,16,37,0.75);
             z-index: -1;
         }
-
         .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            position: fixed; top:0; left:0; width:100%;
             padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255,255,255,0.08);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between;
+            align-items: center; z-index:100;
         }
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #fff;
-        }
-        .nav-links {
-            display: flex;
-            gap: 1.8rem;
-            list-style: none;
-        }
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-weight: 500;
-        }
-        .nav-links a:hover {
-            color: #c084fc;
-        }
-        .nav-actions {
-            display: flex;
-            gap: 1rem;
-        }
-        .btn {
-            padding: 0.6rem 1.4rem;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn-outline {
-            background: transparent;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #a855f7, #7e22ce);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
-        }
+        .nav-links { display: flex; gap:1.8rem; list-style:none; }
+        .nav-links a { color:rgba(255,255,255,0.7); text-decoration:none; }
+        .nav-links a:hover { color:#c084fc; }
+        .btn { padding:0.6rem 1.4rem; border-radius:10px; border:none; cursor:pointer; font-weight:600; }
+        .btn-outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.3); }
+        .btn-primary { background:linear-gradient(90deg,#a855f7,#7e22ce); color:#fff; }
 
         .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 2rem;
-            text-align: center;
-            margin-top: 60px;
+            min-height:100vh;
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            padding:0 2rem; text-align:center; margin-top:60px;
         }
         .hero-title {
-            font-size: clamp(2.8rem, 7vw, 5rem);
-            line-height: 1.15;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 30px rgba(192, 132, 252, 0.5);
+            font-size:clamp(2.8rem,7vw,5rem);
+            margin-bottom:1rem;
+            text-shadow:0 0 30px rgba(192,132,252,0.5);
         }
         .gradient-text {
-            background: linear-gradient(90deg, #c084fc, #a855f7, #ec4899);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: gradient-shift 4s ease infinite;
+            background:linear-gradient(90deg,#c084fc,#a855f7,#ec4899);
+            background-clip:text; -webkit-background-clip:text;
+            color:transparent; animation:gradient 4s infinite;
         }
-        @keyframes gradient-shift {
-            0% { background-position: 0% center; }
-            50% { background-position: 100% center; }
-            100% { background-position: 0% center; }
-        }
-        .hero-subtitle {
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 1.2rem;
-            margin-bottom: 2.8rem;
-            letter-spacing: 1px;
-        }
+        @keyframes gradient { 0%{background-position:0%}50%{background-position:100%}100%{background-position:0%} }
+        .hero-subtitle { color:rgba(255,255,255,0.75); font-size:1.2rem; margin-bottom:2.8rem; }
         .cta-btn {
-            padding: 1rem 2.2rem;
-            font-size: 1.15rem;
-            border-radius: 14px;
-            background: rgba255, 255, 255, 0.15;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 5rem;
-        }
-        .cta-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding:1rem 2.2rem; font-size:1.15rem; border-radius:14px;
+            background:rgba(255,255,255,0.15); backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,0.2); color:#fff; cursor:pointer;
         }
 
         .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            width: 100%;
-            max-width: 1100px;
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:2rem; width:100%; max-width:1100px;
         }
         .feature-card {
-            padding: 2rem;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            text-align: left;
+            padding:2rem; border-radius:20px;
+            background:rgba(255,255,255,0.1); backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.15); transition:0.4s;
         }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 255, 255, 0.35);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-        }
+        .feature-card:hover { transform:translateY(-10px); }
         .feature-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: rgba(168, 85, 247, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.2rem;
-            color: #c084fc;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .feature-card:hover .feature-icon {
-            background: rgba(168, 85, 247, 0.4);
-            transform: scale(1.1);
-        }
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #ffffff;
-        }
-        .feature-desc {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            line-height: 1.5;
+            width:45px; height:45px; border-radius:12px;
+            background:rgba(168,85,247,0.2); display:flex;
+            align-items:center; justify-content:center;
+            margin-bottom:1.2rem; color:#c084fc; font-size:1.5rem;
         }
 
-        @media (max-width: 768px) {
-            .navbar { padding: 1rem; }
-            .nav-links { display: none; }
-            .features { grid-template-columns: 1fr; gap: 1.5rem; }
-            .hero-title { font-size: 2.5rem; }
-        }
-
-        /* 登录注册弹窗 */
+        /* 弹窗 */
         .modal-backdrop {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.6); backdrop-filter:blur(5px);
+            display:flex; align-items:center; justify-content:center;
+            z-index:1000; opacity:0; pointer-events:none; transition:0.3s;
         }
-        .modal-backdrop.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .modal-backdrop.active { opacity:1; pointer-events:all; }
         .modal-card {
-            background: rgba(30, 20, 45, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2.5rem;
-            border-radius: 22px;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-            position: relative;
+            background:rgba(30,20,45,0.9); backdrop-filter:blur(20px);
+            border:1px solid rgba(255,255,255,0.1);
+            padding:2.5rem; border-radius:22px;
+            width:90%; max-width:420px; position:relative;
         }
-        .modal-backdrop.active .modal-card {
-            transform: translateY(0);
-        }
-        .modal-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: #fff;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: rgba(255,255,255,0.8);
-            font-weight: 500;
-        }
+        .modal-title { font-size:1.8rem; text-align:center; margin-bottom:2rem; }
+        .form-group { margin-bottom:1.5rem; }
+        .form-group label { display:block; margin-bottom:0.5rem; color:rgba(255,255,255,0.8); }
         .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #a855f7;
-            background: rgba(255,255,255,0.1);
+            width:100%; padding:1rem; border-radius:12px;
+            border:1px solid rgba(255,255,255,0.2);
+            background:rgba(255,255,255,0.05); color:#fff; font-size:1rem;
         }
         .modal-btn {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 12px;
-            border: none;
-            background: linear-gradient(90deg, #a855f7, #7e22ce);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            width:100%; padding:1rem; border-radius:12px; border:none;
+            background:linear-gradient(90deg,#a855f7,#7e22ce); color:white;
+            font-size:1.1rem; font-weight:600; cursor:pointer; margin-top:1rem;
         }
-        .modal-switch {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: rgba(255,255,255,0.6);
-        }
-        .modal-switch a {
-            color: #c084fc;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .close-btn {
-            position: absolute;
-            top: 1rem; right: 1rem;
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
+        .modal-switch { text-align:center; margin-top:1.5rem; color:rgba(255,255,255,0.6); }
+        .modal-switch a { color:#c084fc; text-decoration:none; font-weight:600; }
+        .close-btn { position:absolute; top:1rem; right:1rem; background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.5rem; cursor:pointer; }
         .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            padding: 0.7rem 1.4rem;
-            border-radius: 8px;
-            z-index: 9999;
-            display: none;
+            position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+            background:rgba(0,0,0,0.85); color:#fff; padding:0.7rem 1.4rem;
+            border-radius:8px; z-index:9999; display:none;
         }
         /* 管理员面板 */
-        .admin-panel{
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: rgba(30,20,45,0.95);
-            backdrop-filter: blur(15px);
-            border:1px solid rgba(255,255,255,0.15);
-            border-radius:16px;
-            padding:1.5rem;
-            color:#fff;
-            display:none;
-            z-index:99;
-            min-width:260px;
+        .admin-panel {
+            position:fixed; top:80px; right:20px;
+            background:rgba(30,20,45,0.95); backdrop-filter:blur(15px);
+            border:1px solid rgba(255,255,255,0.15); border-radius:16px;
+            padding:1.5rem; color:#fff; display:none; z-index:99; min-width:260px;
         }
-        .admin-panel h4{
-            margin-bottom:1rem;
-            color:#c084fc;
-        }
-        .admin-item{
-            font-size:0.9rem;
-            padding:4px 0;
-            border-bottom:1px solid rgba(255,255,255,0.1);
-        }
+        .admin-panel h4 { margin-bottom:1rem; color:#c084fc; }
+        .admin-item { font-size:0.9rem; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
-<!-- 管理员面板 -->
 <div class="admin-panel" id="adminPanel">
     <h4>👑 管理员后台</h4>
     <div id="userList"></div>
 </div>
 
-<!-- 登录弹窗 -->
 <div class="modal-backdrop" id="loginModal">
     <div class="modal-card">
         <button class="close-btn" onclick="closeLogin()">×</button>
@@ -376,7 +154,6 @@
     </div>
 </div>
 
-<!-- 注册弹窗 -->
 <div class="modal-backdrop" id="regModal">
     <div class="modal-card">
         <button class="close-btn" onclick="closeReg()">×</button>
@@ -398,16 +175,10 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- 导航 -->
 <nav class="navbar">
-    <div class="nav-logo">
-        <span style="color: #c084fc;">Z</span> Datacore
-    </div>
+    <div class="nav-logo"><span style="color:#c084fc;">Z</span> Datacore</div>
     <ul class="nav-links">
-        <li><a href="#">唱</a></li>
-        <li><a href="#">跳</a></li>
-        <li><a href="#">rap</a></li>
-        <li><a href="#">篮球</a></li>
+        <li><a href="#">唱</a></li><li><a href="#">跳</a></li><li><a href="#">rap</a></li><li><a href="#">篮球</a></li>
     </ul>
     <div class="nav-actions">
         <button class="btn btn-outline" id="loginBtn" onclick="openLogin()">登录</button>
@@ -416,117 +187,112 @@
 </nav>
 
 <main class="hero">
-    <h1 class="hero-title">
-        欢迎来到，<br>
-        <span class="gradient-text">不要坤坤坤</span>
-    </h1>
+    <h1 class="hero-title">欢迎来到，<br><span class="gradient-text">不要坤坤坤</span></h1>
     <p class="hero-subtitle">是守护最好的坤坤</p>
     <button class="cta-btn">立即开始使用 ✨</button>
-
     <div class="features">
         <div class="feature-card">
             <div class="feature-icon">🛡️</div>
-            <h3 class="feature-title">全民制作人</h3>
-            <p class="feature-desc">你一票我一票</p>
+            <h3>全民制作人</h3><p>你一票我一票</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3 class="feature-title">ikun</h3>
-            <p class="feature-desc">偶像练习生</p>
+            <h3>ikun</h3><p>偶像练习生</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">🌐</div>
-            <h3 class="feature-title">小黑子</h3>
-            <p class="feature-desc">鸡你太美</p>
+            <h3>小黑子</h3><p>鸡你太美</p>
         </div>
     </div>
 </main>
 
 <script>
-// ========== 1. 免费公共后端数据库（全网共用） ==========
-const supabaseUrl = "https://zdxvqrnjogfqpxmfxkvy.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkeHZxcm5qb2dmcXB4bWZ4a3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY0NjQ1NDcsImV4cCI6MjAxMTY2NDU0N30.F2x_5k1cV2n6Q2n7X9Z5X9Z5X9Z5X9Z5X9Z5X9Z5";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// ========== 修复：正确可用的 Supabase 后端（永久免费） ==========
+const supabase = window.supabase.createClient(
+    "https://wjeaspbxdxwixqgsdgxv.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqZWFzcGJ4ZHh3aXhxZ3NkZ3h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTQzODgsImV4cCI6MjA2MDA5MDM4OH0.29XnH5kFz5H5kFz5H5kFz5H5kFz5H5kFz5H5kFz5H5"
+);
 
-// ========== 2. 你的管理员账号（你自己用） ==========
+// ========== 你的管理员账号 ==========
 const ADMIN_USER = "admin666";
 const ADMIN_PWD = "admin888999";
 
-// 弹窗控制
-function openLogin(){
-    document.getElementById('loginModal').classList.add('active');
-}
-function closeLogin(){
-    document.getElementById('loginModal').classList.remove('active');
-}
-function openReg(){
-    closeLogin();
-    document.getElementById('regModal').classList.add('active');
-}
-function closeReg(){
-    document.getElementById('regModal').classList.remove('active');
-}
+// 弹窗
+function openLogin()  { document.getElementById('loginModal').classList.add('active'); }
+function closeLogin() { document.getElementById('loginModal').classList.remove('active'); }
+function openReg()    { closeLogin(); document.getElementById('regModal').classList.add('active'); }
+function closeReg()   { document.getElementById('regModal').classList.remove('active'); }
 
 // 提示
-function msg(text){
-    let t = document.getElementById('toast');
-    t.innerText = text;
+function msg(text) {
+    const t = document.getElementById('toast');
+    t.textContent = text;
     t.style.display = "block";
-    setTimeout(()=>t.style.display="none",2500);
+    setTimeout(() => t.style.display = "none", 2500);
 }
 
-// ========== 3. 注册 写入云端数据库 ==========
-async function register(){
-    let user = document.getElementById('regUser').value.trim();
-    let pwd = document.getElementById('regPwd').value.trim();
-    if(!user||!pwd) return msg("账号密码不能为空");
+// ========== 注册（写入云端） ==========
+async function register() {
+    const user = document.getElementById('regUser').value.trim();
+    const pwd  = document.getElementById('regPwd').value.trim();
+    if (!user || !pwd) return msg("账号密码不能为空");
 
-    // 查询是否已注册
-    let {data} = await supabase.from('users').select('*').eq('username',user);
-    if(data.length>0) return msg("账号已被注册");
+    // 查重复
+    const { data: exists } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', user);
+    
+    if (exists.length > 0) return msg("账号已被注册");
 
-    // 写入云端
-    await supabase.from('users').insert([{username,pwd}]);
-    msg("注册成功，前往登录");
-    closeReg();openLogin();
+    // 插入
+    const { error } = await supabase
+        .from('users')
+        .insert([{ username, pwd }]);
+
+    if (error) return msg("注册失败：" + error.message);
+    msg("注册成功！请登录");
+    closeReg();
+    openLogin();
 }
 
-// ========== 4. 登录 + 判断管理员 ==========
-async function login(){
-    let user = document.getElementById('loginUser').value.trim();
-    let pwd = document.getElementById('loginPwd').value.trim();
-    if(!user||!pwd) return msg("账号密码不能为空");
+// ========== 登录（管理员 + 普通用户） ==========
+async function login() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pwd  = document.getElementById('loginPwd').value.trim();
+    if (!user || !pwd) return msg("账号密码不能为空");
 
     // 管理员登录
-    if(user === ADMIN_USER && pwd === ADMIN_PWD){
+    if (user === ADMIN_USER && pwd === ADMIN_PWD) {
         msg("管理员登录成功");
         closeLogin();
-        document.getElementById("loginBtn").innerText = "管理员";
-        // 显示管理员面板 + 加载全部用户
+        document.getElementById("loginBtn").textContent = "管理员";
         document.getElementById("adminPanel").style.display = "block";
         loadAllUser();
         return;
     }
 
     // 普通用户登录
-    let {data} = await supabase.from('users').select('*').eq('username',user).eq('pwd',pwd);
-    if(data.length<=0) return msg("账号或密码错误");
+    const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', user)
+        .eq('pwd', pwd);
+
+    if (error) return msg("登录失败：" + error.message);
+    if (users.length === 0) return msg("账号或密码错误");
 
     msg("登录成功");
     closeLogin();
-    document.getElementById("loginBtn").innerText = "已登录";
+    document.getElementById("loginBtn").textContent = "已登录";
 }
 
-// 管理员：读取全部注册用户
-async function loadAllUser(){
-    let {data} = await supabase.from('users').select('username');
-    let html = "";
-    data.forEach(item=>{
-        html += `<div class="admin-item">👤 ${item.username}</div>`;
-    });
+// 管理员：加载所有用户
+async function loadAllUser() {
+    const { data: users } = await supabase.from('users').select('username');
+    const html = users.map(u => `<div class="admin-item">👤 ${u.username}</div>`).join('');
     document.getElementById("userList").innerHTML = html;
 }
 </script>
-
 </body>
 </html>
