@@ -1,218 +1,322 @@
-/* 全局重置 & 基础样式 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datacore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
 
-body {
-  min-height: 100vh;
-  /* 背景图/渐变，这里给你做了兼容 */
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: #fff;
-  overflow-x: hidden;
-}
+        :root {
+            --foreground: #ffffff;
+            --muted-foreground: #a1a1aa;
+            --primary: #3b82f6;
+            --accent: #06b6d4;
+            --border: rgba(255,255,255,0.1);
+            --secondary: rgba(255,255,255,0.05);
+        }
 
-/* 顶部导航栏 - 毛玻璃效果 */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* 核心毛玻璃效果 */
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  z-index: 100;
-}
+        body {
+            color: var(--foreground);
+            overflow-x: hidden;
+            /* 关键：让body撑满全屏 */
+            min-height: 100vh;
+            position: relative;
+        }
 
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
+        /* 【核心修复】全屏视频背景 */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            opacity: 0.4;
+            z-index: -1;
+        }
 
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  list-style: none;
-}
+        /* 网格遮罩 */
+        .gradient-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-.nav-links a {
-  color: rgba(255, 255, 255, 0.85);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
+        /* 顶部光晕 */
+        .glow-top {
+            position: fixed;
+            left: 50%;
+            top: 0;
+            height: 600px;
+            width: 800px;
+            transform: translateX(-50%) translateY(-30%);
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            filter: blur(128px);
+            z-index: 2;
+            pointer-events: none;
+        }
 
-.nav-links a:hover {
-  color: #fff;
-}
+        /* 导航栏 */
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+        }
 
-.nav-actions {
-  display: flex;
-  gap: 1rem;
-}
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
 
-.btn {
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.btn-outline {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
 
-.btn-primary {
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-  color: #fff;
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
-}
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
-}
+        .nav-links a {
+            color: var(--muted-foreground);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
 
-/* 主内容区 */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 2rem;
-  text-align: center;
-}
+        .nav-links a:hover {
+            color: var(--foreground);
+        }
 
-.hero-title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  line-height: 1.2;
-  margin-bottom: 1rem;
-}
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-/* 渐变文字效果 */
-.gradient-text {
-  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 50%, #a855f7 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradient-shift 3s ease infinite;
-}
+        .btn-text {
+            color: var(--muted-foreground);
+            background: transparent;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% center; }
-  50% { background-position: 100% center; }
-  100% { background-position: 0% center; }
-}
+        .btn-text:hover {
+            color: var(--foreground);
+        }
 
-.hero-subtitle {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-}
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-.cta-btn {
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+        .btn-primary:hover { transform: scale(1.05); }
+        .btn-primary:active { transform: scale(0.95); }
 
-.cta-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
+        /* 主内容 */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            text-align: center;
+        }
 
-/* 功能卡片区 */
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1000px;
-  margin-top: 4rem;
-}
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            max-width: 4xl;
+        }
 
-.feature-card {
-  padding: 1.75rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
 
-.feature-card:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-}
+        .desc {
+            margin-top: 24px;
+            max-width: 2xl;
+            color: var(--muted-foreground);
+            font-size: 16px;
+        }
 
-.feature-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(79, 172, 254, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  color: #4facfe;
-  transition: all 0.3s ease;
-}
+        .btn-secondary {
+            margin-top: 40px;
+            padding: 14px 24px;
+            border: 1px solid var(--border);
+            background: var(--secondary);
+            color: var(--foreground);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
 
-.feature-card:hover .feature-icon {
-  background: rgba(79, 172, 254, 0.4);
-  transform: scale(1.1);
-}
+        .btn-secondary:hover { transform: scale(1.05); }
+        .btn-secondary:active { transform: scale(0.95); }
 
-.feature-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
+        /* 卡片区域 */
+        .card-wrap {
+            width: 100%;
+            max-width: 4xl;
+            margin: 64px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
 
-.feature-desc {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.9rem;
-}
+        .glass-card {
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: left;
+            transition: 0.2s;
+            background: rgba(0,0,0,0.3);
+        }
 
-/* 响应式适配 */
-@media (max-width: 768px) {
-  .navbar {
-    padding: 1rem;
-  }
-  .nav-links {
-    display: none;
-  }
-  .features {
-    grid-template-columns: 1fr;
-  }
-}
+        .glass-card:hover {
+            border-color: rgba(59,130,246,0.2);
+            background: rgba(59,130,246,0.03);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(59,130,246,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--muted-foreground);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 全屏视频背景 -->
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="./videos/hero-bg.mp4" type="video/mp4">
+    </video>
+
+    <!-- 网格遮罩 -->
+    <div class="gradient-grid"></div>
+
+    <!-- 顶部光晕 -->
+    <div class="glow-top"></div>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-icon">Z</div>
+                <span class="font-bold text-lg">Datacore</span>
+            </div>
+            <div class="nav-links">
+                <a href=" ">唱</a >
+                <a href="#">跳</a >
+                <a href="#">rap</a >
+                <a href="#">篮球</a >
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-text">登录</button>
+            <button class="btn-primary">立即开始</button>
+        </div>
+    </nav>
+
+    <!-- 主体内容 -->
+    <main>
+        <h1>
+            欢迎来到，
+            <br>
+            <span class="gradient-text">不要坤坤坤</span>
+        </h1>
+        <p class="desc">是守护最好的坤坤</p >
+
+        <button class="btn-secondary">立即开始使用</button>
+
+        <!-- 功能卡片 -->
+        <div class="card-wrap">
+            <div class="glass-card">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">全民制作人</h3>
+                <p class="card-desc">你一票我一票</p >
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">ikun</h3>
+                <p class="card-desc">偶像练习生</p >
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">🌐</div>
+                <h3 class="card-title">小黑子</h3>
+                <p class="card-desc">鸡你太美</p >
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 视频加载失败时的备用背景
+        const video = document.querySelector('.video-bg');
+        video.addEventListener('error', () => {
+            document.body.style.background = '#070709 url(https://wallpaperaccess.com/full/3123332.jpg) center/cover';
+        });
+    </script>
+</body>
+</html>
