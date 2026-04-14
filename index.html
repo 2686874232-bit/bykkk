@@ -13,7 +13,6 @@
         }
 
         :root {
-            --background: #070709;
             --foreground: #ffffff;
             --muted-foreground: #a1a1aa;
             --primary: #3b82f6;
@@ -23,43 +22,40 @@
         }
 
         body {
-            background: var(--background);
             color: var(--foreground);
             overflow-x: hidden;
+            /* 关键：让body撑满全屏 */
+            min-height: 100vh;
+            position: relative;
         }
 
-        .relative { position: relative; }
-        .min-h-screen { min-height: 100vh; }
-        .w-full { width: 100%; }
-        .overflow-hidden { overflow: hidden; }
-        .z-0 { z-index: 0; }
-        .z-10 { z-index: 10; }
-        .z-\[1\] { z-index: 1; }
-        .z-\[2\] { z-index: 2; }
-
-        /* 视频背景 */
-        video {
-            position: absolute;
-            inset: 0;
-            height: 100%;
-            width: 100%;
-            object-cover: cover;
-            opacity: 0.3;
+        /* 【核心修复】全屏视频背景 */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            opacity: 0.4;
+            z-index: -1;
         }
 
         /* 网格遮罩 */
         .gradient-grid {
-            position: absolute;
+            position: fixed;
             inset: 0;
             background-image: 
                 linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
             background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
         }
 
         /* 顶部光晕 */
         .glow-top {
-            position: absolute;
+            position: fixed;
             left: 50%;
             top: 0;
             height: 600px;
@@ -68,10 +64,14 @@
             border-radius: 999px;
             background: rgba(59, 130, 246, 0.15);
             filter: blur(128px);
+            z-index: 2;
+            pointer-events: none;
         }
 
         /* 导航栏 */
         nav {
+            position: relative;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -154,7 +154,9 @@
 
         /* 主内容 */
         main {
-            flex: 1;
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 80px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -214,6 +216,7 @@
             padding: 24px;
             text-align: left;
             transition: 0.2s;
+            background: rgba(0,0,0,0.3);
         }
 
         .glass-card:hover {
@@ -243,13 +246,11 @@
             color: var(--muted-foreground);
             margin-top: 4px;
         }
-
-        .flex-col { display: flex; flex-direction: column; }
     </style>
 </head>
-<body class="relative min-h-screen w-full overflow-hidden">
-    <!-- 视频背景 -->
-    <video autoplay loop muted playsinline>
+<body>
+    <!-- 全屏视频背景 -->
+    <video class="video-bg" autoplay loop muted playsinline>
         <source src="./videos/hero-bg.mp4" type="video/mp4">
     </video>
 
@@ -259,64 +260,61 @@
     <!-- 顶部光晕 -->
     <div class="glow-top"></div>
 
-    <div class="relative z-10 flex min-h-screen flex-col">
-        <!-- 导航栏 -->
-        <nav>
-            <div class="nav-left">
-                <div class="logo">
-                    <div class="logo-icon">Z</div>
-                    <span class="font-bold text-lg">Datacore</span>
-                </div>
-                <div class="nav-links">
-                    <a href=" ">唱</a >
-                    <a href="#">跳</a >
-                    <a href="#">rap</a >
-                    <a href="#">篮球</a >
-                </div>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-icon">Z</div>
+                <span class="font-bold text-lg">Datacore</span>
             </div>
-            <div class="nav-buttons">
-                <button class="btn-text">登录</button>
-                <button class="btn-primary">立即开始</button>
+            <div class="nav-links">
+                <a href=" ">唱</a >
+                <a href="#">跳</a >
+                <a href="#">rap</a >
+                <a href="#">篮球</a >
             </div>
-        </nav>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-text">登录</button>
+            <button class="btn-primary">立即开始</button>
+        </div>
+    </nav>
 
-        <!-- 主体内容 -->
-        <main>
-            <h1>
-                欢迎来到，
-                <br>
-                <span class="gradient-text">不要坤坤坤</span>
-            </h1>
-            <p class="desc">是守护最好的坤坤</p >
+    <!-- 主体内容 -->
+    <main>
+        <h1>
+            欢迎来到，
+            <br>
+            <span class="gradient-text">不要坤坤坤</span>
+        </h1>
+        <p class="desc">是守护最好的坤坤</p >
 
-            <button class="btn-secondary">立即开始使用</button>
+        <button class="btn-secondary">立即开始使用</button>
 
-            <!-- 功能卡片 -->
-            <div class="card-wrap">
-                <div class="glass-card">
-                    <div class="card-icon">🛡️</div>
-                    <h3 class="card-title">全民制作人</h3>
-                    <p class="card-desc">你一票我一票</p >
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon">📊</div>
-                    <h3 class="card-title">ikun</h3>
-                    <p class="card-desc">偶像练习生</p >
-                </div>
-                <div class="glass-card">
-                    <div class="card-icon">🌐</div>
-                    <h3 class="card-title">小黑子</h3>
-                    <p class="card-desc">鸡你太美</p >
-                </div>
+        <!-- 功能卡片 -->
+        <div class="card-wrap">
+            <div class="glass-card">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">全民制作人</h3>
+                <p class="card-desc">你一票我一票</p >
             </div>
-        </main>
-    </div>
+            <div class="glass-card">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">ikun</h3>
+                <p class="card-desc">偶像练习生</p >
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">🌐</div>
+                <h3 class="card-title">小黑子</h3>
+                <p class="card-desc">鸡你太美</p >
+            </div>
+        </div>
+    </main>
 
     <script>
-        // 视频加载失败隐藏
-        const video = document.querySelector('video');
+        // 视频加载失败时的备用背景
+        const video = document.querySelector('.video-bg');
         video.addEventListener('error', () => {
-            video.style.display = 'none';
             document.body.style.background = '#070709 url(https://wallpaperaccess.com/full/3123332.jpg) center/cover';
         });
     </script>
