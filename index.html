@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>不要坤坤坤</title>
-    <!-- 引入免费云端后端数据库 BaaS -->
-    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.15.0/dist/av-min.js"></script>
+    <!-- 引入Supabase 免费后端 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -138,7 +138,7 @@
             padding: 1rem 2.2rem;
             font-size: 1.15rem;
             border-radius: 14px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba255, 255, 255, 0.15;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
@@ -242,6 +242,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             transform: translateY(-20px);
             transition: transform 0.3s ease;
+            position: relative;
         }
         .modal-backdrop.active .modal-card {
             transform: translateY(0);
@@ -275,7 +276,7 @@
         .form-group input:focus {
             outline: none;
             border-color: #a855f7;
-            background: rgba255,255,255,0.1;
+            background: rgba(255,255,255,0.1);
         }
         .modal-btn {
             width: 100%;
@@ -314,16 +315,46 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             color: #fff;
             padding: 0.7rem 1.4rem;
             border-radius: 8px;
             z-index: 9999;
             display: none;
         }
+        /* 管理员面板 */
+        .admin-panel{
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(30,20,45,0.95);
+            backdrop-filter: blur(15px);
+            border:1px solid rgba(255,255,255,0.15);
+            border-radius:16px;
+            padding:1.5rem;
+            color:#fff;
+            display:none;
+            z-index:99;
+            min-width:260px;
+        }
+        .admin-panel h4{
+            margin-bottom:1rem;
+            color:#c084fc;
+        }
+        .admin-item{
+            font-size:0.9rem;
+            padding:4px 0;
+            border-bottom:1px solid rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
+
+<!-- 管理员面板 -->
+<div class="admin-panel" id="adminPanel">
+    <h4>👑 管理员后台</h4>
+    <div id="userList"></div>
+</div>
 
 <!-- 登录弹窗 -->
 <div class="modal-backdrop" id="loginModal">
@@ -340,7 +371,7 @@
         </div>
         <button class="modal-btn" onclick="login()">立即登录</button>
         <div class="modal-switch">
-            没有账号？<a href=" ">立即注册</a >
+            没有账号？<a href="javascript:openReg()">立即注册</a>
         </div>
     </div>
 </div>
@@ -360,7 +391,7 @@
         </div>
         <button class="modal-btn" onclick="register()">完成注册</button>
         <div class="modal-switch">
-            已有账号？<a href="javascript:openLogin()">去登录</a >
+            已有账号？<a href="javascript:openLogin()">去登录</a>
         </div>
     </div>
 </div>
@@ -373,10 +404,10 @@
         <span style="color: #c084fc;">Z</span> Datacore
     </div>
     <ul class="nav-links">
-        <li><a href="#">唱</a ></li>
-        <li><a href="#">跳</a ></li>
-        <li><a href="#">rap</a ></li>
-        <li><a href="#">篮球</a ></li>
+        <li><a href="#">唱</a></li>
+        <li><a href="#">跳</a></li>
+        <li><a href="#">rap</a></li>
+        <li><a href="#">篮球</a></li>
     </ul>
     <div class="nav-actions">
         <button class="btn btn-outline" id="loginBtn" onclick="openLogin()">登录</button>
@@ -389,37 +420,37 @@
         欢迎来到，<br>
         <span class="gradient-text">不要坤坤坤</span>
     </h1>
-    <p class="hero-subtitle">是守护最好的坤坤</p >
+    <p class="hero-subtitle">是守护最好的坤坤</p>
     <button class="cta-btn">立即开始使用 ✨</button>
 
     <div class="features">
         <div class="feature-card">
             <div class="feature-icon">🛡️</div>
             <h3 class="feature-title">全民制作人</h3>
-            <p class="feature-desc">你一票我一票</p >
+            <p class="feature-desc">你一票我一票</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">📊</div>
             <h3 class="feature-title">ikun</h3>
-            <p class="feature-desc">偶像练习生</p >
+            <p class="feature-desc">偶像练习生</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">🌐</div>
             <h3 class="feature-title">小黑子</h3>
-            <p class="feature-desc">鸡你太美</p >
+            <p class="feature-desc">鸡你太美</p>
         </div>
     </div>
 </main>
 
 <script>
-// 初始化云端后端数据库（免费公共后端）
-AV.init({
-  appId: "v0N1kF9cL5aR2jDmH7sX9bQw1eT",
-  appKey: "8zP2xQ7dR4aF9gK6jL3sC5vB1nM",
-  serverURL: "https://xxx.leancloud.app"
-});
+// ========== 1. 免费公共后端数据库（全网共用） ==========
+const supabaseUrl = "https://zdxvqrnjogfqpxmfxkvy.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkeHZxcm5qb2dmcXB4bWZ4a3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY0NjQ1NDcsImV4cCI6MjAxMTY2NDU0N30.F2x_5k1cV2n6Q2n7X9Z5X9Z5X9Z5X9Z5X9Z5X9Z5";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-const UserDB = AV.Object.extend("UserList");
+// ========== 2. 你的管理员账号（你自己用） ==========
+const ADMIN_USER = "admin666";
+const ADMIN_PWD = "admin888999";
 
 // 弹窗控制
 function openLogin(){
@@ -436,56 +467,64 @@ function closeReg(){
     document.getElementById('regModal').classList.remove('active');
 }
 
-// 提示框
+// 提示
 function msg(text){
     let t = document.getElementById('toast');
     t.innerText = text;
     t.style.display = "block";
-    setTimeout(()=>{t.style.display="none"},2000);
+    setTimeout(()=>t.style.display="none",2500);
 }
 
-// 注册 - 写入云端后端数据库
-function register(){
+// ========== 3. 注册 写入云端数据库 ==========
+async function register(){
     let user = document.getElementById('regUser').value.trim();
     let pwd = document.getElementById('regPwd').value.trim();
-    if(!user || !pwd) return msg("账号密码不能为空");
+    if(!user||!pwd) return msg("账号密码不能为空");
 
-    let query = new AV.Query(UserDB);
-    query.equalTo("username", user);
-    query.find().then(res=>{
-        if(res.length>0){
-            msg("该账号已被注册");
-        }else{
-            let newUser = new UserDB();
-            newUser.set("username",user);
-            newUser.set("password",pwd);
-            newUser.save().then(()=>{
-                msg("注册成功！请登录");
-                closeReg();
-                openLogin();
-            })
-        }
-    })
+    // 查询是否已注册
+    let {data} = await supabase.from('users').select('*').eq('username',user);
+    if(data.length>0) return msg("账号已被注册");
+
+    // 写入云端
+    await supabase.from('users').insert([{username,pwd}]);
+    msg("注册成功，前往登录");
+    closeReg();openLogin();
 }
 
-// 登录 - 验证云端后端数据库
-function login(){
+// ========== 4. 登录 + 判断管理员 ==========
+async function login(){
     let user = document.getElementById('loginUser').value.trim();
     let pwd = document.getElementById('loginPwd').value.trim();
-    if(!user || !pwd) return msg("账号密码不能为空");
+    if(!user||!pwd) return msg("账号密码不能为空");
 
-    let query = new AV.Query(UserDB);
-    query.equalTo("username",user);
-    query.find().then(res=>{
-        if(res.length<=0) return msg("账号不存在");
-        if(res[0].get("password") === pwd){
-            msg("登录成功");
-            closeLogin();
-            document.getElementById("loginBtn").innerText = "已登录";
-        }else{
-            msg("密码错误");
-        }
-    })
+    // 管理员登录
+    if(user === ADMIN_USER && pwd === ADMIN_PWD){
+        msg("管理员登录成功");
+        closeLogin();
+        document.getElementById("loginBtn").innerText = "管理员";
+        // 显示管理员面板 + 加载全部用户
+        document.getElementById("adminPanel").style.display = "block";
+        loadAllUser();
+        return;
+    }
+
+    // 普通用户登录
+    let {data} = await supabase.from('users').select('*').eq('username',user).eq('pwd',pwd);
+    if(data.length<=0) return msg("账号或密码错误");
+
+    msg("登录成功");
+    closeLogin();
+    document.getElementById("loginBtn").innerText = "已登录";
+}
+
+// 管理员：读取全部注册用户
+async function loadAllUser(){
+    let {data} = await supabase.from('users').select('username');
+    let html = "";
+    data.forEach(item=>{
+        html += `<div class="admin-item">👤 ${item.username}</div>`;
+    });
+    document.getElementById("userList").innerHTML = html;
 }
 </script>
 
