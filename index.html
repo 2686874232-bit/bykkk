@@ -1,118 +1,324 @@
-import { ArrowRight, ChevronRight, Zap, Shield, BarChart3, Globe, Sparkles } from "lucide-react";
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datacore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
 
-const VIDEO_SRC = "/videos/hero-bg.mp4";
+        :root {
+            --background: #070709;
+            --foreground: #ffffff;
+            --muted-foreground: #a1a1aa;
+            --primary: #3b82f6;
+            --accent: #06b6d4;
+            --border: rgba(255,255,255,0.1);
+            --secondary: rgba(255,255,255,0.05);
+        }
 
-const NAV_LINKS = ["唱", "跳", "rap", "篮球"];
+        body {
+            background: var(--background);
+            color: var(--foreground);
+            overflow-x: hidden;
+        }
 
-const TRUST_LOGOS = ["Vercel", "Linear", "Figma", "Notion", "Stripe"];
+        .relative { position: relative; }
+        .min-h-screen { min-height: 100vh; }
+        .w-full { width: 100%; }
+        .overflow-hidden { overflow: hidden; }
+        .z-0 { z-index: 0; }
+        .z-10 { z-index: 10; }
+        .z-\[1\] { z-index: 1; }
+        .z-\[2\] { z-index: 2; }
 
-const Index = () => {
-  return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background font-sans">
-      {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 z-0 h-full w-full object-cover opacity-30"
-      >
-        <source src={VIDEO_SRC} type="video/mp4" />
-      </video>
+        /* 视频背景 */
+        video {
+            position: absolute;
+            inset: 0;
+            height: 100%;
+            width: 100%;
+            object-cover: cover;
+            opacity: 0.3;
+        }
 
-      {/* Grid overlay */}
-      <div className="gradient-grid absolute inset-0 z-[1]" />
+        /* 网格遮罩 */
+        .gradient-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-      {/* Radial glow */}
-      <div className="absolute left-1/2 top-0 z-[2] h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary/15 blur-[128px]" />
+        /* 顶部光晕 */
+        .glow-top {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            height: 600px;
+            width: 800px;
+            transform: translateX(-50%) translateY(-30%);
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            filter: blur(128px);
+        }
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-screen flex-col">
-        {/* Navbar */}
-        <nav className="flex items-center justify-between px-6 py-5 lg:px-12">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Zap size={16} className="text-primary-foreground" />
-              </div>
-              <span className="font-display text-lg font-bold tracking-tight text-foreground">
-                Datacore
-              </span>
+        /* 导航栏 */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--muted-foreground);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--foreground);
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-text {
+            color: var(--muted-foreground);
+            background: transparent;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-text:hover {
+            color: var(--foreground);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover { transform: scale(1.05); }
+        .btn-primary:active { transform: scale(0.95); }
+
+        /* 主内容 */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            max-width: 4xl;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .desc {
+            margin-top: 24px;
+            max-width: 2xl;
+            color: var(--muted-foreground);
+            font-size: 16px;
+        }
+
+        .btn-secondary {
+            margin-top: 40px;
+            padding: 14px 24px;
+            border: 1px solid var(--border);
+            background: var(--secondary);
+            color: var(--foreground);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover { transform: scale(1.05); }
+        .btn-secondary:active { transform: scale(0.95); }
+
+        /* 卡片区域 */
+        .card-wrap {
+            width: 100%;
+            max-width: 4xl;
+            margin: 64px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .glass-card {
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(59,130,246,0.2);
+            background: rgba(59,130,246,0.03);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(59,130,246,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--muted-foreground);
+            margin-top: 4px;
+        }
+
+        .flex-col { display: flex; flex-direction: column; }
+    </style>
+</head>
+<body class="relative min-h-screen w-full overflow-hidden">
+    <!-- 视频背景 -->
+    <video autoplay loop muted playsinline>
+        <source src="./videos/hero-bg.mp4" type="video/mp4">
+    </video>
+
+    <!-- 网格遮罩 -->
+    <div class="gradient-grid"></div>
+
+    <!-- 顶部光晕 -->
+    <div class="glow-top"></div>
+
+    <div class="relative z-10 flex min-h-screen flex-col">
+        <!-- 导航栏 -->
+        <nav>
+            <div class="nav-left">
+                <div class="logo">
+                    <div class="logo-icon">Z</div>
+                    <span class="font-bold text-lg">Datacore</span>
+                </div>
+                <div class="nav-links">
+                    <a href=" ">唱</a >
+                    <a href="#">跳</a >
+                    <a href="#">rap</a >
+                    <a href="#">篮球</a >
+                </div>
             </div>
-            <div className="hidden items-center gap-6 lg:flex">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {link}
-                </a>
-              ))}
+            <div class="nav-buttons">
+                <button class="btn-text">登录</button>
+                <button class="btn-primary">立即开始</button>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:block">
-              登录
-            </button>
-            <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-105 active:scale-95">
-              立即开始
-            </button>
-          </div>
         </nav>
 
-        {/* Hero */}
-        <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-          {/* Badge */}
+        <!-- 主体内容 -->
+        <main>
+            <h1>
+                欢迎来到，
+                <br>
+                <span class="gradient-text">不要坤坤坤</span>
+            </h1>
+            <p class="desc">是守护最好的坤坤</p >
 
-          {/* Headline */}
-          <h1 className="max-w-4xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-            欢迎来到，{" "}
-            <br className="hidden sm:block" />
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              不要坤坤坤
-            </span>
-          </h1>
+            <button class="btn-secondary">立即开始使用</button>
 
-          {/* Subheadline */}
-          <p className="mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            是守护最好的坤坤
-          </p>
-
-          {/* CTAs */}
-          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-            <button className="flex items-center gap-2.5 rounded-xl border border-border bg-secondary px-6 py-3.5 text-sm font-semibold text-foreground transition-transform hover:scale-105 active:scale-95">
-              <span>立即开始使用</span>
-              <Sparkles size={16} className="text-muted-foreground" />
-            </button>
-          </div>
-
-
-          {/* Feature cards */}
-          <div className="mx-auto mb-12 mt-16 grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              { icon: Shield, title: "全民制作人", desc: "你一票我一票" },
-              { icon: BarChart3, title: "ikun", desc: "偶像练习生" },
-              { icon: Globe, title: "小黑子", desc: "鸡你太美" },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="glass-card group rounded-2xl p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/[0.03]"
-              >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                  <Icon size={18} className="text-primary" />
+            <!-- 功能卡片 -->
+            <div class="card-wrap">
+                <div class="glass-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3 class="card-title">全民制作人</h3>
+                    <p class="card-desc">你一票我一票</p >
                 </div>
-                <h3 className="font-display text-sm font-semibold text-foreground">
-                  {title}
-                </h3>
-                <p className="mt-1 text-xs text-muted-foreground">{desc}</p>
-              </div>
-            ))}
-          </div>
+                <div class="glass-card">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">ikun</h3>
+                    <p class="card-desc">偶像练习生</p >
+                </div>
+                <div class="glass-card">
+                    <div class="card-icon">🌐</div>
+                    <h3 class="card-title">小黑子</h3>
+                    <p class="card-desc">鸡你太美</p >
+                </div>
+            </div>
         </main>
-      </div>
     </div>
-  );
-};
 
-export default Index;
+    <script>
+        // 视频加载失败隐藏
+        const video = document.querySelector('video');
+        video.addEventListener('error', () => {
+            video.style.display = 'none';
+            document.body.style.background = '#070709 url(https://wallpaperaccess.com/full/3123332.jpg) center/cover';
+        });
+    </script>
+</body>
+</html>
